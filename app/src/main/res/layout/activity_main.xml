@@ -16,14 +16,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="Add Product"
-        app:layout_constraintBottom_toTopOf="@+id/avaiable_productList"
+        app:layout_constraintBottom_toTopOf="@+id/available_productList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/avaiable_productList"
+        android:id="@+id/available_productList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -50,5 +50,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avaiable_productList" />
+        app:layout_constraintTop_toBottomOf="@+id/available_productList" />
 </android.support.constraint.ConstraintLayout>
