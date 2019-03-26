@@ -1,7 +1,13 @@
 package com.example.dil.admin;
 
+import android.app.ProgressDialog;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,28 +20,41 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class AddProduct extends AppCompatActivity implements View.OnClickListener {
-    private String CategoryName;
+    //    static String TAG = AppCompatActivity.class.getSimpleName();
+    private String CategoryName, pname, pprice, pdisplay, pcolor, pram, pmemory, pcamera, pbattery, pprocessor, pnetwork, pfingerprint, pothers, pvideolink, saveCurrentDate, saveCurrentTime;
+    private EditText ProductName, Price, Display, Color, RAM, Memory, Camera, Battery, Processor, Network, Fingerprint, Others, YoutubeVideoLink;
+    private Button SubmitButton;
     private static Button openCustomGallery;
     private static GridView selectedImageGridView;
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_add_product);
-//
-//        CategoryName = getIntent().getExtras().get("category").toString();
-//        Toast.makeText(this, CategoryName, Toast.LENGTH_SHORT).show();
-//
-//    }
-//}
-
     private static final int CustomGallerySelectId = 1;//Set Intent Id
     public static final String CustomGalleryIntentKey = "ImageArray";//Set Intent Key Value
+    private String productRandomKey;
+    private DatabaseReference ProductRef;
+    private ProgressDialog loadingBar;
+    private Images images;
+    private List<String> selectedImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +66,30 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
 
         CategoryName = getIntent().getExtras().get("category").toString();
         Toast.makeText(this, CategoryName, Toast.LENGTH_SHORT).show();
+//        ProductImagesRef = FirebaseStorage.getInstance().getReference().child("Product Images");
+        ProductRef = FirebaseDatabase.getInstance().getReference().child("Products");
+
+        ProductName = (EditText) findViewById(R.id.product_name);
+        Price = (EditText) findViewById(R.id.price);
+        Display = (EditText) findViewById(R.id.display);
+        Color = (EditText) findViewById(R.id.color);
+        RAM = (EditText) findViewById(R.id.ram);
+        Memory = (EditText) findViewById(R.id.memory);
+        Camera = (EditText) findViewById(R.id.camera);
+        Battery = (EditText) findViewById(R.id.battery);
+        Processor = (EditText) findViewById(R.id.processor);
+        Network = (EditText) findViewById(R.id.network);
+        Fingerprint = (EditText) findViewById(R.id.fingerprint);
+        Others = (EditText) findViewById(R.id.others);
+        YoutubeVideoLink = findViewById(R.id.youtube_video_link);
+        SubmitButton = (Button) findViewById(R.id.submit);
+        loadingBar = new ProgressDialog(this);
+
+        images = new Images();
+
+
     }
+
 
     //Init all views
     private void initViews() {
@@ -55,10 +97,12 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
         selectedImageGridView = (GridView) findViewById(R.id.selectedImagesGridView);
     }
 
+
     //set Listeners
     private void setListeners() {
         openCustomGallery.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View view) {
@@ -68,11 +112,18 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
                 startActivityForResult(new Intent(AddProduct.this, CustomGallery_Activity.class), CustomGallerySelectId);
                 break;
         }
+        SubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ValidateProductData();
+            }
+
+        });
 
     }
 
-    protected void onActivityResult(int requestcode, int resultcode,
-                                    Intent imagereturnintent) {
+
+    protected void onActivityResult(int requestcode, int resultcode, Intent imagereturnintent) {
         super.onActivityResult(requestcode, resultcode, imagereturnintent);
         switch (requestcode) {
             case CustomGallerySelectId:
@@ -81,11 +132,14 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
                     //Convert string array into List by splitting by ',' and substring after '[' and before ']'
                     List<String> selectedImages = Arrays.asList(imagesArray.substring(1, imagesArray.length() - 1).split(", "));
                     loadGridView(new ArrayList<String>(selectedImages));//call load gridview method by passing converted list into arrayList
+//                    uploadImagesToFirebase(selectedImages);
+                    this.selectedImages = selectedImages;
                 }
                 break;
 
         }
     }
+
 
     //Load GridView
     private void loadGridView(ArrayList<String> imagesArray) {
@@ -111,6 +165,8 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
             }
             loadGridView(selectedImages);//call load gridview
         }
+
+
     }
 
 
@@ -122,6 +178,153 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+
     }
+
+
+    private void ValidateProductData() {
+
+        pname = ProductName.getText().toString();
+        pprice = Price.getText().toString();
+        pdisplay = Display.getText().toString();
+        pcolor = Color.getText().toString();
+        pram = RAM.getText().toString();
+        pmemory = Memory.getText().toString();
+        pcamera = Camera.getText().toString();
+        pbattery = Battery.getText().toString();
+        pprocessor = Processor.getText().toString();
+        pnetwork = Network.getText().toString();
+        pfingerprint = Fingerprint.getText().toString();
+        pothers = Others.getText().toString();
+        pvideolink = YoutubeVideoLink.getText().toString();
+
+
+        if (TextUtils.isEmpty(pname)) {
+            Toast.makeText(this, "Product Name is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pprice)) {
+//            Toast.makeText(this, "Product Price is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pdisplay)) {
+//            Toast.makeText(this, "Display Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pcolor)) {
+//            Toast.makeText(this, "Product Color is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pram)) {
+//            Toast.makeText(this, "Ram Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pmemory)) {
+//            Toast.makeText(this, "Product Memory Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pcamera)) {
+//            Toast.makeText(this, "Camera Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pbattery)) {
+//            Toast.makeText(this, "Battery Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pprocessor)) {
+//            Toast.makeText(this, "Processor Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pnetwork)) {
+//            Toast.makeText(this, "Network Information is Mandatory", Toast.LENGTH_SHORT).show();
+//        } else if (TextUtils.isEmpty(pfingerprint)) {
+//            Toast.makeText(this, "Fingerprint Information is Mandatory", Toast.LENGTH_SHORT).show();
+        } else {
+            StoreProductInformation();
+//            SaveProductInfoToDatabase();
+//            Log.d(TAG, "ValidateProductData: " + selectedImages.size());
+//            uploadImagesToFirebase(selectedImages);
+        }
+
+    }
+
+    //image upload
+
+    private void uploadImagesToFirebase(List<String> selectedImages) {
+
+        loadingBar.setTitle("Uploading Images");
+        loadingBar.setMessage("Dear Admin please wait, while we are uploading the product images");
+        loadingBar.setCanceledOnTouchOutside(false);
+        loadingBar.show();
+
+
+        Uri[] uri = new Uri[selectedImages.size()];
+        FirebaseApp app = FirebaseApp.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance(app);
+        StorageReference storageRef;
+
+        for (int i = 0; i < selectedImages.size(); i++) {
+//            uri[i] = Uri.parse("file:/"+selectedImages.get(i));
+            uri[i] = Uri.fromFile(new File(selectedImages.get(i)));
+            storageRef = storage.getReference("Product Images");
+            final StorageReference ref = storageRef.child(uri[i].getLastPathSegment() + productRandomKey);
+            ref.putFile(uri[i])
+                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            SaveProductInfoToDatabase();
+                            String downloadUrl = ref.getDownloadUrl().toString();
+                            images.getImages().add(downloadUrl);
+                            loadingBar.dismiss();
+                        }
+                    })
+                    .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println();
+                        }
+                    });
+        }
+    }
+
+    private void SaveProductInfoToDatabase() {
+
+        HashMap<String, Object> productMap = new HashMap<>();
+
+        productMap.put("pid", productRandomKey);
+        productMap.put("date", saveCurrentDate);
+        productMap.put("time", saveCurrentTime);
+        productMap.put("CategoryName", CategoryName);
+        productMap.put("ProductName", pname);
+        productMap.put("Price", pprice);
+        productMap.put("Display", pdisplay);
+        productMap.put("Color", pcolor);
+        productMap.put("RAM", pram);
+        productMap.put("Memory", pmemory);
+        productMap.put("Camera", pcamera);
+        productMap.put("Battery", pbattery);
+        productMap.put("Processor", pprocessor);
+        productMap.put("Network", pnetwork);
+        productMap.put("Fingerprint", pfingerprint);
+        productMap.put("Others", pothers);
+        productMap.put("YoutubeVideoLink", pvideolink);
+        productMap.put("ImageUris", images);
+
+        ProductRef.child(productRandomKey).updateChildren(productMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+                            Toast.makeText(AddProduct.this, "Product is Added Successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String message = task.getException().toString();
+                            Toast.makeText(AddProduct.this, "Error:" + message, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+    }
+
+    private void StoreProductInformation() {
+
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+
+        productRandomKey = saveCurrentDate + saveCurrentTime;
+
+        uploadImagesToFirebase(selectedImages);
+
+
+//        StorageReference filePath = ProductImagesRef.child(selectedImageGridView + productRandomKey + ".jpg");
+
+    }
+
 
 }
