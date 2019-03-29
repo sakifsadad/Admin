@@ -55,6 +55,7 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
     private ProgressDialog loadingBar;
     private Images images;
     private List<String> selectedImages;
+    private List<Uri> seletedImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,30 +233,44 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
 
     //image upload
 
-    private void uploadImagesToFirebase(List<String> selectedImages) {
+    private void uploadImagesToFirebase(final List<String> selectedImages) {
 
         loadingBar.setTitle("Uploading Images");
         loadingBar.setMessage("Dear Admin please wait, while we are uploading the product images");
         loadingBar.setCanceledOnTouchOutside(false);
         loadingBar.show();
-
+        
 
         Uri[] uri = new Uri[selectedImages.size()];
         FirebaseApp app = FirebaseApp.getInstance();
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
-        StorageReference storageRef;
+        final StorageReference storageRef;
+
+        storageRef = storage.getReference("Product Images");
 
         for (int i = 0; i < selectedImages.size(); i++) {
 //            uri[i] = Uri.parse("file:/"+selectedImages.get(i));
             uri[i] = Uri.fromFile(new File(selectedImages.get(i)));
-            storageRef = storage.getReference("Product Images");
             final StorageReference ref = storageRef.child(uri[i].getLastPathSegment() + productRandomKey);
             ref.putFile(uri[i])
                     .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
                             SaveProductInfoToDatabase();
-                            String downloadUrl = ref.getDownloadUrl().toString();
-                            images.getImages().add(downloadUrl);
+                            Task<Uri> downloadUrl = ref.getDownloadUrl();
+                            downloadUrl.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    // Got the download URL for 'users/me/profile.png'
+                                    Log.d("HI", "onSuccess: " + uri.toString());
+                                    images.getImages().add(uri.toString());
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                }
+                            });
                             loadingBar.dismiss();
                         }
                     })
