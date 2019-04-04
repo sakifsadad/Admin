@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -23,19 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProductCategory"/>
+        <activity android:name=".ProductCategory" />
         <activity android:name=".AddProduct">
-
             <intent-filter>
-                <!-- Intent filter action for receiving multiple images  -->
+
+                <!-- Intent filter action for receiving multiple images -->
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <!--  To receive Images set mime type to image -->
+                <!-- To receive Images set mime type to image -->
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
         <activity android:name=".CustomGallery_Activity" />
+        <activity android:name=".UpcomingProduct"></activity>
     </application>
 
 </manifest>

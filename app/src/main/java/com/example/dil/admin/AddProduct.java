@@ -239,7 +239,7 @@ public class AddProduct extends AppCompatActivity implements View.OnClickListene
         loadingBar.setMessage("Dear Admin please wait, while we are uploading the product images");
         loadingBar.setCanceledOnTouchOutside(false);
         loadingBar.show();
-        
+
 
         Uri[] uri = new Uri[selectedImages.size()];
         FirebaseApp app = FirebaseApp.getInstance();
