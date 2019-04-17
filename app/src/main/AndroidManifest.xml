@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".AddUpcomingProduct"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProductCategory" />
-        <activity android:name=".AddProduct">
+        <activity android:name=".AddAvailableProduct">
             <intent-filter>
 
                 <!-- Intent filter action for receiving multiple images -->
@@ -36,7 +37,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".CustomGallery_Activity" />
-        <activity android:name=".UpcomingProduct"></activity>
     </application>
 
 </manifest>

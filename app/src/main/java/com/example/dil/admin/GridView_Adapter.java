@@ -77,7 +77,7 @@ public class GridView_Adapter extends BaseAdapter {
         CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.selectCheckBox);
         final ImageView imageView = (ImageView) view.findViewById(R.id.galleryImageView);
 
-        //If Context is AddProduct then hide checkbox
+        //If Context is AddAvailableProduct then hide checkbox
         if (!isCustomGalleryActivity)
             mCheckBox.setVisibility(View.GONE);
 
