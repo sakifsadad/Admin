@@ -92,7 +92,7 @@ public class CustomGallery_Activity extends AppCompatActivity implements View.On
 
                 //Send back result to Addproduct with selected images
                 Intent intent = new Intent();
-                intent.putExtra(AddProduct.CustomGalleryIntentKey, selectedItems.toString());//Convert Array into string to pass data
+                intent.putExtra(AddAvailableProduct.CustomGalleryIntentKey, selectedItems.toString());//Convert Array into string to pass data
                 setResult(RESULT_OK, intent);//Set result OK
                 finish();//finish activity
                 break;

@@ -21,7 +21,7 @@ public class ProductCategory extends AppCompatActivity {
         AddAvailableProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductCategory.this, AddProduct.class);
+                Intent intent = new Intent(ProductCategory.this, com.example.dil.admin.AddAvailableProduct.class);
                 intent.putExtra("category","availableProduct");
                 startActivity(intent);
             }
@@ -30,7 +30,7 @@ public class ProductCategory extends AppCompatActivity {
         AddUpcomingProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductCategory.this, AddProduct.class);
+                Intent intent = new Intent(ProductCategory.this, AddUpcomingProduct.class);
                 intent.putExtra("category","upcomingProduct");
                 startActivity(intent);
             }
