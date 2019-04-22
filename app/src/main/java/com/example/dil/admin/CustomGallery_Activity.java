@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -77,27 +78,48 @@ public class CustomGallery_Activity extends AppCompatActivity implements View.On
         if (selectedItems.size() > 0) {
             selectImages.setText(selectedItems.size() + " - Images Selected");
             selectImages.setVisibility(View.VISIBLE);
+
+//            imageLimit();
         } else
             selectImages.setVisibility(View.GONE);
 
     }
 
+//    private void imageLimit() {
+//        ArrayList<String> selectedItems = imagesAdapter.getCheckedItems();
+//        if (selectedItems.size()>5){
+//            Toast.makeText(this,"WTF", Toast.LENGTH_SHORT).show();
+//
+//        }
+//
+//    }
+
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.selectImagesBtn:
+        ArrayList<String> selectedItems = imagesAdapter.getCheckedItems();
 
-                //When button is clicked then fill array with selected images
-                ArrayList<String> selectedItems = imagesAdapter.getCheckedItems();
+        if (selectedItems.size() <= 5) {
+            switch (view.getId()) {
+                case R.id.selectImagesBtn:
 
-                //Send back result to Addproduct with selected images
-                Intent intent = new Intent();
-                intent.putExtra(AddAvailableProduct.CustomGalleryIntentKey, selectedItems.toString());//Convert Array into string to pass data
-                setResult(RESULT_OK, intent);//Set result OK
-                finish();//finish activity
-                break;
+                    //When button is clicked then fill array with selected images
+//                ArrayList<String> selectedItems = imagesAdapter.getCheckedItems();
+
+                    //Send back result to Addproduct with selected images
+                    Intent intent = new Intent();
+                    intent.putExtra(AddAvailableProduct.CustomGalleryIntentKey, selectedItems.toString());//Convert Array into string to pass data
+                    setResult(RESULT_OK, intent);//Set result OK
+                    finish();//finish activity
+                    break;
+
+            }
 
         }
 
+        else {
+//            Toast.makeText(this,"OKAY", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(view, "A short message is !", Snackbar.LENGTH_LONG);
+        }
+        }
     }
-}
+

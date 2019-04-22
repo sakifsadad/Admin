@@ -15,17 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".AddUpcomingProduct"></activity>
-        <activity android:name=".MainActivity"/>
-
-        <activity android:name=".SplashScreen"
+        <activity android:name=".UpdateAvailableProduct"></activity>
+        <activity android:name=".UpcomingProductList" />
+        <activity android:name=".AvailableProductList" />
+        <activity android:name=".AddUpcomingProduct" />
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".SplashScreen"
             android:theme="@style/AppFullScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".ProductCategory" />
         <activity android:name=".AddAvailableProduct">

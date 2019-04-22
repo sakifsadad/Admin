@@ -60,6 +60,7 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
         setListeners();
         getSharedImages();
 
+
         CategoryName = getIntent().getExtras().get("category").toString();
         Toast.makeText(this, CategoryName, Toast.LENGTH_SHORT).show();
 //        ProductImagesRef = FirebaseStorage.getInstance().getReference().child("Product Images");
