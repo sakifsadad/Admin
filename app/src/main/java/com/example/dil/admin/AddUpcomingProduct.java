@@ -56,6 +56,8 @@ public class AddUpcomingProduct extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_available_product);
+        setTitle("Add Upcoming Product");
+
         initViews();
         setListeners();
         getSharedImages();

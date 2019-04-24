@@ -14,6 +14,7 @@ public class ProductCategory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_category);
+        setTitle("Add Product");
 
         AddAvailableProduct = (Button)findViewById(R.id.available_product);
         AddUpcomingProduct = (Button)findViewById(R.id.upcoming_product);

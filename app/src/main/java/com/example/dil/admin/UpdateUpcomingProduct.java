@@ -13,12 +13,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class UpdateAvailableProduct extends AppCompatActivity {
+public class UpdateUpcomingProduct extends AppCompatActivity {
 
     private String productID = "";
     private EditText productName, price, display, color, ram, rom, sim, battery, processor, network, camera,fingerprint, youtubevideolink, others;
 
-    DatabaseReference availableProductsref;
+    DatabaseReference upcomingProductsref;
 
 
     @Override
@@ -43,7 +43,7 @@ public class UpdateAvailableProduct extends AppCompatActivity {
 
 
         productID = getIntent().getStringExtra("pid");
-        availableProductsref = FirebaseDatabase.getInstance().getReference().child("AvailableProducts").child(productID);
+        upcomingProductsref = FirebaseDatabase.getInstance().getReference().child("Upcoming Products").child(productID);
 
 
         productName.setText(getIntent().getStringExtra("ProductName"));
@@ -68,7 +68,7 @@ public class UpdateAvailableProduct extends AppCompatActivity {
 
 //        availableProductsref.child("pid").setValue(productID);
 
-        availableProductsref.addListenerForSingleValueEvent(new ValueEventListener() {
+        upcomingProductsref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 dataSnapshot.getRef().child("ProductName").setValue(productName.getText().toString());
@@ -83,9 +83,9 @@ public class UpdateAvailableProduct extends AppCompatActivity {
                 dataSnapshot.getRef().child("YoutubeVideoLink").setValue(youtubevideolink.getText().toString());
                 dataSnapshot.getRef().child("Fingerprint").setValue(fingerprint.getText().toString());
 
-                Toast.makeText(UpdateAvailableProduct.this,"Updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateUpcomingProduct.this,"Updated", Toast.LENGTH_SHORT).show();
 
-                UpdateAvailableProduct.this.finish();
+                UpdateUpcomingProduct.this.finish();
 
             }
 
@@ -99,6 +99,6 @@ public class UpdateAvailableProduct extends AppCompatActivity {
 
     public void btndelete_click(View view) {
 
-        availableProductsref.removeValue();
+        upcomingProductsref.removeValue();
     }
 }

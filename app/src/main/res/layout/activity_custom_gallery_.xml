@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
-        android:background="#ffffff"
-        android:textColor="#009688"
+        android:background="#6B10B6"
+        android:textColor="#FFFFFF"
         android:textSize="15sp"
         android:visibility="gone"/>
 </RelativeLayout>

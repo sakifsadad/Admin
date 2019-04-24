@@ -40,12 +40,12 @@ public class AvailableProductList extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerOptions <Product> options =
+        FirebaseRecyclerOptions<Product> options =
                 new FirebaseRecyclerOptions.Builder<Product>()
-                .setQuery(availableProductsref, Product.class)
-                .build();
+                        .setQuery(availableProductsref, Product.class)
+                        .build();
 
-        FirebaseRecyclerAdapter <Product, ProductViewHolder> adapter =
+        FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Product, ProductViewHolder>(options) {
                     @Override
                     protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull final Product model) {
@@ -58,7 +58,7 @@ public class AvailableProductList extends AppCompatActivity {
                             public void onClick(View v) {
                                 Intent intent = new Intent(AvailableProductList.this, UpdateAvailableProduct.class);
                                 intent.putExtra("pid", model.getPid());
-                                intent.putExtra("ProductName",model.getProductName());
+                                intent.putExtra("ProductName", model.getProductName());
                                 intent.putExtra("Price", model.getPrice());
                                 intent.putExtra("Color", model.getColor());
                                 intent.putExtra("Camera", model.getCamera());

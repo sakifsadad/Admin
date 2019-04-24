@@ -1,5 +1,6 @@
 package com.example.dil.admin;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ public class UpcomingProductList extends AppCompatActivity {
     private DatabaseReference upcomingProductsref;
     private RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +49,32 @@ public class UpcomingProductList extends AppCompatActivity {
         FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Product, ProductViewHolder>(options) {
                     @Override
-                    protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull Product model) {
+                    protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull final Product model) {
 
                         holder.txtProductName.setText(model.getProductName());
                         holder.txtProductPrice.setText(model.getPrice() + " Tk.");
+
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(UpcomingProductList.this, UpdateAvailableProduct.class);
+                                intent.putExtra("pid", model.getPid());
+                                intent.putExtra("ProductName", model.getProductName());
+                                intent.putExtra("Price", model.getPrice());
+                                intent.putExtra("Color", model.getColor());
+                                intent.putExtra("Camera", model.getCamera());
+                                intent.putExtra("Battery", model.getBattery());
+                                intent.putExtra("Display", model.getDisplay());
+                                intent.putExtra("Fingerprint", model.getFingerprint());
+                                intent.putExtra("Memory", model.getMemory());
+                                intent.putExtra("Network", model.getNetwork());
+                                intent.putExtra("Processor", model.getProcessor());
+                                intent.putExtra("RAM", model.getRAM());
+                                intent.putExtra("YoutubeVideoLink", model.getYoutubeVideoLink());
+                                intent.putExtra("Others", model.getOthers());
+                                startActivity(intent);
+                            }
+                        });
 
 
                     }

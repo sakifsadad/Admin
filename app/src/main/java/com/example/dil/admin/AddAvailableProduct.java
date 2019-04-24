@@ -56,6 +56,8 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_available_product);
+        setTitle("Add Available Product");
+
         initViews();
         setListeners();
         getSharedImages();
@@ -218,7 +220,10 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
 //            Toast.makeText(this, "Network Information is Mandatory", Toast.LENGTH_SHORT).show();
 //        } else if (TextUtils.isEmpty(pfingerprint)) {
 //            Toast.makeText(this, "Fingerprint Information is Mandatory", Toast.LENGTH_SHORT).show();
-        } else {
+        }
+
+
+        else {
             StoreProductInformation();
 //            SaveProductInfoToDatabase();
 //            Log.d(TAG, "ValidateProductData: " + selectedImages.size());
@@ -249,6 +254,7 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
             uri[i] = Uri.fromFile(new File(selectedImages.get(i)));
             final StorageReference ref = storageRef.child(uri[i].getLastPathSegment());
             ref.putFile(uri[i])
+
                     .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
@@ -303,6 +309,8 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
         productMap.put("Others", pothers);
         productMap.put("YoutubeVideoLink", pvideolink);
         productMap.put("ImageUris", images);
+
+
 
         ProductRef.child(productRandomKey).updateChildren(productMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

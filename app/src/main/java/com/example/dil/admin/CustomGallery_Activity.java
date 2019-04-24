@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,6 +25,8 @@ public class CustomGallery_Activity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_gallery_);
+        setTitle("You Can Select Only 5 Images");
+
         initViews();
         setListeners();
         fetchGalleryImages();
@@ -117,8 +119,8 @@ public class CustomGallery_Activity extends AppCompatActivity implements View.On
         }
 
         else {
-//            Toast.makeText(this,"OKAY", Toast.LENGTH_SHORT).show();
-            Snackbar snackbar = Snackbar.make(view, "A short message is !", Snackbar.LENGTH_LONG);
+            Toast.makeText(this,"You can select only 5 images", Toast.LENGTH_SHORT).show();
+//            Snackbar snackbar = Snackbar.make(view, "A short message is !", Snackbar.LENGTH_LONG);
         }
         }
     }
