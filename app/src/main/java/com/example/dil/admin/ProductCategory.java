@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class ProductCategory extends AppCompatActivity {
 
@@ -22,18 +23,37 @@ public class ProductCategory extends AppCompatActivity {
         AddAvailableProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductCategory.this, com.example.dil.admin.AddAvailableProduct.class);
-                intent.putExtra("category","availableProduct");
-                startActivity(intent);
+
+                if (AppStatus.getInstance(ProductCategory.this).isOnline()) {
+
+
+                    Intent intent = new Intent(ProductCategory.this, com.example.dil.admin.AddAvailableProduct.class);
+                    intent.putExtra("category", "Available Product");
+                    startActivity(intent);
+                }
+
+                else {
+                    Toast.makeText(ProductCategory.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         AddUpcomingProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductCategory.this, AddUpcomingProduct.class);
-                intent.putExtra("category","upcomingProduct");
-                startActivity(intent);
+
+                if (AppStatus.getInstance(ProductCategory.this).isOnline()) {
+
+
+                    Intent intent = new Intent(ProductCategory.this, AddUpcomingProduct.class);
+                    intent.putExtra("category", "Upcoming Product");
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(ProductCategory.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
     }

@@ -192,7 +192,7 @@
 
 
         <EditText
-            android:id="@+id/memory"
+            android:id="@+id/rom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -213,7 +213,7 @@
             android:text="Sim"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/memory" />
+            app:layout_constraintTop_toBottomOf="@+id/rom" />
 
         <EditText
             android:id="@+id/sim"

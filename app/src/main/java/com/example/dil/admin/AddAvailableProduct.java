@@ -1,21 +1,25 @@
 package com.example.dil.admin;
 
+import android.Manifest;
 import android.app.ProgressDialog;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.Toast;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,11 +42,12 @@ import java.util.List;
 
 public class AddAvailableProduct extends AppCompatActivity implements View.OnClickListener {
     //    static String TAG = AppCompatActivity.class.getSimpleName();
-    private String CategoryName, pname, pprice, pdisplay, pcolor, pram, pmemory, pcamera, pbattery, pprocessor, pnetwork, pfingerprint, pothers, pvideolink, saveCurrentDate, saveCurrentTime;
-    private EditText ProductName, Price, Display, Color, RAM, Memory, Camera, Battery, Processor, Network, Fingerprint, Others, YoutubeVideoLink;
+    private String CategoryName, pname, pprice, pdisplay, pcolor, pram, psim, prom, pcamera, pbattery, pprocessor, pnetwork, pfingerprint, pothers, pvideolink, saveCurrentDate, saveCurrentTime;
+    private EditText ProductName, Price, Display, Color, RAM, Sim, Memory, Camera, Battery, Processor, Network, Fingerprint, Others, YoutubeVideoLink;
     private Button SubmitButton;
     private static Button openCustomGallery;
     private static GridView selectedImageGridView;
+    private int STORAGE_PERMISSION_CODE = 1;
     private static final int CustomGallerySelectId = 1;//Set Intent Id
     public static final String CustomGalleryIntentKey = "ImageArray";//Set Intent Key Value
     private String productRandomKey;
@@ -63,19 +68,22 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
         getSharedImages();
 
 
+
+
         CategoryName = getIntent().getExtras().get("category").toString();
         Toast.makeText(this, CategoryName, Toast.LENGTH_SHORT).show();
 //        ProductImagesRef = FirebaseStorage.getInstance().getReference().child("Product Images");
-        ProductRef = FirebaseDatabase.getInstance().getReference().child("AvailableProducts");
+        ProductRef = FirebaseDatabase.getInstance().getReference().child("Available Products");
 
         ProductName = (EditText) findViewById(R.id.product_name);
         Price = (EditText) findViewById(R.id.price);
         Display = (EditText) findViewById(R.id.display);
         Color = (EditText) findViewById(R.id.color);
         RAM = (EditText) findViewById(R.id.ram);
-        Memory = (EditText) findViewById(R.id.memory);
+        Memory = (EditText) findViewById(R.id.rom);
         Camera = (EditText) findViewById(R.id.camera);
         Battery = (EditText) findViewById(R.id.battery);
+        Sim = (EditText) findViewById(R.id.sim);
         Processor = (EditText) findViewById(R.id.processor);
         Network = (EditText) findViewById(R.id.network);
         Fingerprint = (EditText) findViewById(R.id.fingerprint);
@@ -107,14 +115,30 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.openCustomGallery:
-                //Start Custom Gallery Activity by passing intent id
-                startActivityForResult(new Intent(AddAvailableProduct.this, CustomGallery_Activity.class), CustomGallerySelectId);
-                break;
+
+                if (ContextCompat.checkSelfPermission(AddAvailableProduct.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(MainActivity.this, "You have already the permission", Toast.LENGTH_SHORT).show();
+                    //Start Custom Gallery Activity by passing intent id
+                    startActivityForResult(new Intent(AddAvailableProduct.this, CustomGallery_Activity.class), CustomGallerySelectId);
+                    break;
+
+                } else {
+//                    requestStoragePermission();
+                    ActivityCompat.requestPermissions(AddAvailableProduct.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+
+                }
+
         }
         SubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ValidateProductData();
+
+                if (AppStatus.getInstance(AddAvailableProduct.this).isOnline()) {
+                    ValidateProductData();
+                }
+                else{
+                    Toast.makeText(AddAvailableProduct.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
@@ -188,13 +212,14 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
         pdisplay = Display.getText().toString();
         pcolor = Color.getText().toString();
         pram = RAM.getText().toString();
-        pmemory = Memory.getText().toString();
+        prom = Memory.getText().toString();
         pcamera = Camera.getText().toString();
         pbattery = Battery.getText().toString();
         pprocessor = Processor.getText().toString();
         pnetwork = Network.getText().toString();
         pfingerprint = Fingerprint.getText().toString();
         pothers = Others.getText().toString();
+        psim = Sim.getText().toString();
         pvideolink = YoutubeVideoLink.getText().toString();
 
 
@@ -236,8 +261,8 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
 
     private void uploadImagesToFirebase(final List<String> selectedImages) {
 
-        loadingBar.setTitle("Uploading Images");
-        loadingBar.setMessage("Dear Admin please wait, while we are uploading the product images");
+        loadingBar.setTitle("Adding Product");
+        loadingBar.setMessage("Dear Admin please wait, while we are adding the product.");
         loadingBar.setCanceledOnTouchOutside(false);
         loadingBar.show();
 
@@ -300,10 +325,11 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
         productMap.put("Display", pdisplay);
         productMap.put("Color", pcolor);
         productMap.put("RAM", pram);
-        productMap.put("Memory", pmemory);
+        productMap.put("ROM", prom);
         productMap.put("Camera", pcamera);
         productMap.put("Battery", pbattery);
         productMap.put("Processor", pprocessor);
+        productMap.put("Sim", psim);
         productMap.put("Network", pnetwork);
         productMap.put("Fingerprint", pfingerprint);
         productMap.put("Others", pothers);
@@ -321,7 +347,7 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
                             Toast.makeText(AddAvailableProduct.this, "Product is Added Successfully", Toast.LENGTH_SHORT).show();
                         } else {
                             String message = task.getException().toString();
-                            Toast.makeText(AddAvailableProduct.this, "Error:" + message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddAvailableProduct.this, "Failed!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

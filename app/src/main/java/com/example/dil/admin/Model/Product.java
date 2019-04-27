@@ -2,20 +2,21 @@ package com.example.dil.admin.Model;
 
 public class Product {
 
-    private String ProductName, Battery, Camera, Color, Display, Fingerprint, Memory, Network, Others, Price, Processor, RAM, YoutubeVideoLink, pid, date, time;
+    private String ProductName, Battery, Camera, Sim, Color, Display, Fingerprint, ROM, Network, Others, Price, Processor, RAM, YoutubeVideoLink, pid, date, time;
 
-    public Product(){
+    public Product() {
 
     }
 
-    public Product(String productName, String battery, String camera, String color, String display, String fingerprint, String memory, String network, String others, String price, String processor, String RAM, String youtubeVideoLink, String pid, String date, String time) {
+    public Product(String productName, String battery, String camera, String Sim, String color, String display, String fingerprint, String ROM, String network, String others, String price, String processor, String RAM, String youtubeVideoLink, String pid, String date, String time) {
         this.ProductName = productName;
         this.Battery = battery;
         this.Camera = camera;
         this.Color = color;
         this.Display = display;
         this.Fingerprint = fingerprint;
-        this.Memory = memory;
+        this.ROM = ROM;
+        this.Sim = Sim;
         this.Network = network;
         this.Others = others;
         this.Price = price;
@@ -51,6 +52,14 @@ public class Product {
         Camera = camera;
     }
 
+    public String getSim() {
+        return Sim;
+    }
+
+    public void setSim(String sim) {
+        Sim = sim;
+    }
+
     public String getColor() {
         return Color;
     }
@@ -75,12 +84,12 @@ public class Product {
         Fingerprint = fingerprint;
     }
 
-    public String getMemory() {
-        return Memory;
+    public String getROM() {
+        return ROM;
     }
 
-    public void setMemory(String memory) {
-        Memory = memory;
+    public void setROM(String ROM) {
+        this.ROM = ROM;
     }
 
     public String getNetwork() {
