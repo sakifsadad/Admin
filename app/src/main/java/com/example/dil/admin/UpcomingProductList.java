@@ -17,6 +17,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 public class UpcomingProductList extends AppCompatActivity {
 
@@ -56,6 +57,7 @@ public class UpcomingProductList extends AppCompatActivity {
 
                             holder.txtProductName.setText(model.getProductName());
                             holder.txtProductPrice.setText(model.getPrice() + " Tk.");
+                            Picasso.get().load(model.getImageUris().getImages().get(0)).into(holder.imageView);
 
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override

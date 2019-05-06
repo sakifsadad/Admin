@@ -193,6 +193,7 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
     }
 
 
+
     //get actual path of uri
     public String getPath(Uri uri) {
         String[] projection = {MediaStore.Images.Media.DATA};
@@ -253,6 +254,7 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
 //            SaveProductInfoToDatabase();
 //            Log.d(TAG, "ValidateProductData: " + selectedImages.size());
 //            uploadImagesToFirebase(selectedImages);
+
         }
 
     }
@@ -284,14 +286,14 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 //                            SaveProductInfoToDatabase();
-                            Task<Uri> downloadUrl = ref.getDownloadUrl();
+                            final Task<Uri> downloadUrl = ref.getDownloadUrl();
                             downloadUrl.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     // Got the download URL for 'users/me/profile.png'
                                     Log.d("HI", "onSuccess: " + uri.toString());
                                     images.getImages().add(uri.toString());
-                                    SaveProductInfoToDatabase();
+                                        SaveProductInfoToDatabase();
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -311,6 +313,10 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
                     });
         }
     }
+
+
+
+
 
     private void SaveProductInfoToDatabase() {
 

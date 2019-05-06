@@ -4,11 +4,14 @@ public class Product {
 
     private String ProductName, Battery, Camera, Sim, Color, Display, Fingerprint, ROM, Network, Others, Price, Processor, RAM, YoutubeVideoLink, pid, date, time;
 
+    private Images ImageUris;
+
+
     public Product() {
 
     }
 
-    public Product(String productName, String battery, String camera, String Sim, String color, String display, String fingerprint, String ROM, String network, String others, String price, String processor, String RAM, String youtubeVideoLink, String pid, String date, String time) {
+    public Product(String productName, String battery, String camera, String Sim, String color, String display, String fingerprint, String ROM, String network, String others, String price, String processor, String RAM, String youtubeVideoLink, String pid, String date, String time ) {
         this.ProductName = productName;
         this.Battery = battery;
         this.Camera = camera;
@@ -26,6 +29,10 @@ public class Product {
         this.pid = pid;
         this.date = date;
         this.time = time;
+    }
+
+    public Product(Images imageUris) {
+        ImageUris = imageUris;
     }
 
     public String getProductName() {
@@ -162,5 +169,13 @@ public class Product {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public Images getImageUris() {
+        return ImageUris;
+    }
+
+    public void setImageUris(Images imageUris) {
+        ImageUris = imageUris;
     }
 }

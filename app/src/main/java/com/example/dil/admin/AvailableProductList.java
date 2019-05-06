@@ -17,6 +17,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 public class AvailableProductList extends AppCompatActivity {
 
@@ -44,26 +45,27 @@ public class AvailableProductList extends AppCompatActivity {
 
 
 
-            FirebaseRecyclerOptions<Product> options =
-                    new FirebaseRecyclerOptions.Builder<Product>()
-                            .setQuery(availableProductsref, Product.class)
-                            .build();
+        FirebaseRecyclerOptions<Product> options =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(availableProductsref, Product.class)
+                        .build();
 
-            FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter =
-                    new FirebaseRecyclerAdapter<Product, ProductViewHolder>(options) {
-                        @Override
-                        protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull final Product model) {
+        FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter =
+                new FirebaseRecyclerAdapter<Product, ProductViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull final Product model) {
 
-                            holder.txtProductName.setText(model.getProductName());
-                            holder.txtProductPrice.setText(model.getPrice() + " Tk.");
-
-
-                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        holder.txtProductName.setText(model.getProductName());
+                        holder.txtProductPrice.setText(model.getPrice() + " Tk.");
+                        Picasso.get().load(model.getImageUris().getImages().get(0)).into(holder.imageView);
 
 
-                                @Override
-                                public void onClick(View v) {
-                                    if (AppStatus.getInstance(AvailableProductList.this).isOnline()) {
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+
+                            @Override
+                            public void onClick(View v) {
+                                if (AppStatus.getInstance(AvailableProductList.this).isOnline()) {
 
                                     Intent intent = new Intent(AvailableProductList.this, UpdateAvailableProduct.class);
                                     intent.putExtra("pid", model.getPid());
@@ -82,28 +84,27 @@ public class AvailableProductList extends AppCompatActivity {
                                     intent.putExtra("YoutubeVideoLink", model.getYoutubeVideoLink());
                                     intent.putExtra("Others", model.getOthers());
                                     startActivity(intent);
+                                } else {
+                                    Toast.makeText(AvailableProductList.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
                                 }
-
-                                    else {
-                                        Toast.makeText(AvailableProductList.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
-                                    }
                             }
-                            });
+                        });
 
-                        }
+                    }
 
 
-                        @NonNull
-                        @Override
-                        public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.product_item_layout, viewGroup, false);
-                            ProductViewHolder holder = new ProductViewHolder(view);
-                            return holder;
-                        }
-                    };
+                    @NonNull
+                    @Override
+                    public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.product_item_layout, viewGroup, false);
+                        ProductViewHolder holder = new ProductViewHolder(view);
+                        return holder;
+                    }
+                };
 
-            recyclerView.setAdapter(adapter);
-            adapter.startListening();
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
     }
+
 }
 
