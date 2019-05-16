@@ -1,7 +1,9 @@
 package com.example.dil.admin;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -350,11 +353,31 @@ public class AddAvailableProduct extends AppCompatActivity implements View.OnCli
                     public void onComplete(@NonNull Task<Void> task) {
 
                         if (task.isSuccessful()) {
-                            Toast.makeText(AddAvailableProduct.this, "Product is Added Successfully", Toast.LENGTH_SHORT).show();
+                            ConfrimDialog();
                         } else {
                             String message = task.getException().toString();
                             Toast.makeText(AddAvailableProduct.this, "Failed!", Toast.LENGTH_SHORT).show();
                         }
+                    }
+
+                    private void ConfrimDialog() {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(AddAvailableProduct.this);
+                        builder1.setTitle(Html.fromHtml("<font color='#05a000'>Successful!</font>"));
+                        builder1.setMessage("Product Added Successfully");
+                        builder1.setCancelable(false);
+
+                        builder1.setPositiveButton(
+                                "Done", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        AddAvailableProduct.this.finish();
+                                    }
+                                }
+                        );
+                        AlertDialog alertDialog = builder1.create();
+                        alertDialog.show();
+
                     }
                 });
 

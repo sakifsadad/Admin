@@ -1,8 +1,11 @@
 package com.example.dil.admin;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -68,6 +71,46 @@ public class UpdateUpcomingProduct extends AppCompatActivity {
 
     }
 
+    public void DialogAppear(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                UpdateUpcomingProduct.this);
+
+        builder.setTitle(Html.fromHtml("<font color='#e61f00'>Delete!</font>"));
+        builder.setMessage("Are you sure?");
+        builder.setCancelable(false);
+
+
+        builder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        upcomingProductsref.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    Toast.makeText(UpdateUpcomingProduct.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+
+                                    UpdateUpcomingProduct.this.finish();
+
+                                } else {
+                                    Toast.makeText(UpdateUpcomingProduct.this, "Delete Failed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+        builder.show();
+    }
+
     public void btnupdate_click(View view) {
 
         if (AppStatus.getInstance(UpdateUpcomingProduct.this).isOnline()) {
@@ -113,27 +156,6 @@ public class UpdateUpcomingProduct extends AppCompatActivity {
 
     public void btndelete_click(View view) {
 
-        if (AppStatus.getInstance(UpdateUpcomingProduct.this).isOnline()) {
-
-
-            upcomingProductsref.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                    if (task.isSuccessful()) {
-
-                        Toast.makeText(UpdateUpcomingProduct.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
-
-                        UpdateUpcomingProduct.this.finish();
-                    } else {
-                        Toast.makeText(UpdateUpcomingProduct.this, "Delete Failed", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            });
-        }
-        else {
-            Toast.makeText(UpdateUpcomingProduct.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
-        }
+    DialogAppear();
     }
 }

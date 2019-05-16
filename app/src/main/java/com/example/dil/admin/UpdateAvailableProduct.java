@@ -1,8 +1,11 @@
 package com.example.dil.admin;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +22,6 @@ public class UpdateAvailableProduct extends AppCompatActivity {
 
     private String productID = "";
     private EditText productName, price, display, color, ram, rom, sim, battery, processor, network, camera,fingerprint, youtubevideolink, others;
-
     DatabaseReference availableProductsref;
 
 
@@ -65,6 +67,45 @@ public class UpdateAvailableProduct extends AppCompatActivity {
         others.setText(getIntent().getStringExtra("Others"));
 
 
+    }
+
+    public void DialogAppear(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                UpdateAvailableProduct.this);
+
+        builder.setTitle(Html.fromHtml("<font color='#e61f00'>Delete!</font>"));
+        builder.setMessage("Are you sure?");
+        builder.setCancelable(false);
+
+
+        builder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        availableProductsref.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    Toast.makeText(UpdateAvailableProduct.this, "Deleted Successfully !", Toast.LENGTH_SHORT).show();
+                                    UpdateAvailableProduct.this.finish();
+
+                                } else {
+                                    Toast.makeText(UpdateAvailableProduct.this, "Delete Failed !", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+        builder.show();
     }
 
     public void btnupdate_click(View view) {
@@ -117,24 +158,30 @@ public class UpdateAvailableProduct extends AppCompatActivity {
 
         if (AppStatus.getInstance(UpdateAvailableProduct.this).isOnline()) {
 
+            DialogAppear();
 
-            availableProductsref.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
 
-                    if (task.isSuccessful()) {
+//            StorageReference storageReference = firebaseStorage.getInstance().getReference().child("Available Product Images");
+//
+//            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                @Override
+//                public void onSuccess(Void aVoid) {
+//                    Toast.makeText(UpdateAvailableProduct.this, "Okay", Toast.LENGTH_SHORT).show();
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Toast.makeText(UpdateAvailableProduct.this, "Nope", Toast.LENGTH_SHORT).show();
+//
+//
+//                }
+//            });
 
-                        Toast.makeText(UpdateAvailableProduct.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
 
-                        UpdateAvailableProduct.this.finish();
 
-//                Intent intent = new Intent(UpdateAvailableProduct.this, AvailableProductList.class);
-//                startActivity(intent);
-                    } else {
-                        Toast.makeText(UpdateAvailableProduct.this, "Delete Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+
+
+
         }
 
         else {
